@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hearing Asymmetry Screening</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <div id="main-frame">
+        <div id="login-screen">
+            <div class="title">User Information</div>
+            <form id="login-form">
+                <label>Name:</label><br>
+                <input type="text" id="name" required><br>
+                <label>Surname:</label><br>
+                <input type="text" id="surname" required><br>
+                <label>Age Group:</label><br>
+                <input type="radio" name="age_group" value="child" required> Child (<18)<br>
+                <input type="radio" name="age_group" value="adult"> Adult (18–60)<br>
+                <input type="radio" name="age_group" value="senior"> Senior (60+)<br>
+                <label>Gender (optional):</label><br>
+                <input type="radio" name="gender" value="male"> Male<br>
+                <input type="radio" name="gender" value="female"> Female<br>
+                <input type="radio" name="gender" value="other"> Other<br>
+                <input type="radio" name="gender" value="prefer_not_to_say"> Prefer not to say<br>
+                <button type="submit" class="btn primary">Submit and Proceed</button>
+            </form>
+        </div>
+
+        <div id="welcome-screen" class="hidden">
+            <div class="title">🎧 Hearing Asymmetry Screening</div>
+            <div class="subtitle">Welcome to the Hearing Test! 🔊</div>
+            <p class="text">This quick demo (1-2 minutes) checks your hearing using headphones. 🎧</p>
+            <p class="text">Ensure a quiet environment for best results. 🤫</p>
+            <button id="start-btn" class="btn primary">Start Screening 🚀</button>
+            <p class="secondary-text">Press SPACE or click to proceed ⌨️</p>
+        </div>
+
+        <div id="consent-screen" class="hidden">
+            <div class="title">⚠️ Important Notice</div>
+            <p class="text">This demo is for showcase purposes only. 🩺</p>
+            <ul class="text">
+                <li>Results are not for diagnosis</li>
+                <li>Consult an audiologist for hearing concerns</li>
+                <li>Ensure headphones work properly</li>
+            </ul>
+            <p class="text">By proceeding, you understand this is a demo.</p>
+            <button id="agree-btn" class="btn success">I Understand - Continue ✅</button>
+            <button id="back-welcome-btn" class="btn secondary">Back ⬅️</button>
+        </div>
+
+        <div id="device-check-screen" class="hidden">
+            <div class="title">🎧 Headphone Check</div>
+            <p class="text">Put on your headphones and position them correctly. 🎧</p>
+            <p class="text">We'll play sounds to check left and right channels. 🔊</p>
+            <div class="key-frame">
+                <button id="left-ear-btn" class="btn primary">🔊 Left Ear 👈</button>
+                <button id="right-ear-btn" class="btn danger">🔊 Right Ear 👉</button>
+                <p id="channel-status" class="text"></p>
+            </div>
+            <button id="headphones-ready-btn" class="btn success">Headphones Ready ✓</button>
+            <button id="back-consent-btn" class="btn secondary">← Back</button>
+        </div>
+
+        <div id="calibration-screen" class="hidden">
+            <div class="title">🔧 Volume Calibration</div>
+            <p class="text">We'll play a 1000 Hz tone. 🎵</p>
+            <p class="text">Adjust the volume slider to a comfortable level before playing. This is the loudest sound you'll hear in the test.</p>
+            <div class="key-frame">
+                <label for="volume-slider">Volume:</label>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3">
+                <button id="play-tone-btn" class="btn primary">🔊 Play Tone</button>
+            </div>
+            <button id="volume-set-btn" class="btn success">Volume Set ✓</button>
+            <button id="back-device-btn" class="btn secondary">← Back</button>
+        </div>
+
+        <div id="instructions-screen" class="hidden">
+            <div class="title">📝 Test Instructions</div>
+            <p class="text">Here's how it works: 🔍</p>
+            <ul class="text">
+                <li>They start at a volume you can definitely hear (like 30–40 dB HL).</li>
+                <li>If you hear it, they lower the dB by 10 dB.</li>
+                <li>If you don’t hear it, they increase dB by 5 dB.</li>
+                <li>They repeat this “down 10 dB, up 5 dB” method until they find the softest level where you respond at least 50% of the time for that frequency.</li>
+                <li>That single value is plotted on the audiogram for that frequency.</li>
+            </ul>
+            <p class="text">Example: At 1000 Hz — you might hear the tone at 15 dB HL but not at 10 dB HL. After a few checks, they confirm 15 dB HL is your threshold.</p>
+            <div class="key-frame">
+                <p class="text">Click YES if you hear a beep, NO if not.</p>
+                <p class="text secondary-text">Some trials are silent by design (not implemented in this demo).</p>
+                <p class="text">Test adjusts to find your threshold 📉</p>
+            </div>
+            <button id="start-test-btn" class="btn primary">🎵 Start Test</button>
+            <button id="back-calibration-btn" class="btn secondary">← Back</button>
+        </div>
+
+        <div id="testing-screen" class="hidden">
+            <div class="title">👂 Hearing Test</div>
+            <progress id="progress-bar" value="0" max="100"></progress>
+            <p id="progress-label" class="text">0%</p>
+            <p id="ear-label" class="text"></p>
+            <p id="test-info" class="text"></p>
+            <div id="response-frame">
+                <p id="status-label" class="text"></p>
+                <p id="response-status" class="text">Preparing test... ⚙️</p>
+                <div id="response-buttons">
+                    <button id="yes-btn" class="btn success">YES, I heard it ✓</button>
+                    <button id="no-btn" class="btn danger">NO, I didn't hear it ❌</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-screen" class="hidden">
+            <div class="title">📊 Test Results</div>
+            <p id="status-text" class="text"></p>
+            <p id="recommendation" class="text"></p>
+            <canvas id="audiogram-chart"></canvas>
+            <div class="subtitle">Numerical Results</div>
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>Frequency (Hz)</th>
+                        <th>Left (dB HL)</th>
+                        <th>Right (dB HL)</th>
+                        <th>Difference (dB)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="download-results-btn" class="btn primary">Download Results 📥</button>
+            <button id="try-again-btn" class="btn primary">🔄 Try Again</button>
+            <button id="exit-btn" class="btn danger">Exit ❌</button>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
